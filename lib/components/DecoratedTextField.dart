@@ -12,6 +12,7 @@ class DecoratedTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      textAlign: TextAlign.center,
       onChanged: (value) {
         //Do something with the user input.
         onChangedCallback(value);
