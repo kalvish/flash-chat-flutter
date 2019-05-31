@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "564664317581",
+    "firebase_url": "https://flash-chat-d7c68.firebaseio.com",
+    "project_id": "flash-chat-d7c68",
+    "storage_bucket": "flash-chat-d7c68.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564664317581:android:2050ff1a609ed003",
+        "android_client_info": {
+          "package_name": "live.kalan.flash_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "564664317581-ehgcvu07d6uo5vvp1ad2v38l250q84h6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwvCFkjf8LLnNfEqPQUMKqFv9s-_e4NF4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "564664317581-ehgcvu07d6uo5vvp1ad2v38l250q84h6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
