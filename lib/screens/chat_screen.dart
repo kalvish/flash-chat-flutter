@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flash_chat/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -30,23 +29,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-//  getMessages() async {
-//    final messages = await _firestore.collection('messages').getDocuments();
-//    List<DocumentSnapshot> documents = messages.documents;
-//    for (var document in documents) {
-//      print(document.data);
-//    }
-//  }
-//
-//  getStreamMessages() async {
-//    await for (var snapshot in _firestore.collection('messages').snapshots()) {
-//      List<DocumentSnapshot> documents = snapshot.documents;
-//      for (var document in documents) {
-//        print(document.data);
-//      }
-//    }
-//  }
-
   @override
   void initState() {
     // TODO: implement initState
@@ -67,8 +49,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 //Implement logout functionality
                 await _auth.signOut();
                 Navigator.pop(context);
-////                getMessages();
-//                getStreamMessages();
               }),
         ],
         title: Text('⚡️Chat'),
@@ -155,7 +135,6 @@ class MessageStream extends StatelessWidget {
             messageSender: messageSender,
             messageText: messageText,
           );
-//                      Text('$messageText from $messageSender');
           messageWidgets.add(messageWidget);
         }
         return Expanded(
