@@ -34,6 +34,6 @@ We’re going to build a modern messaging app where users can sign up and log in
 ## Google Maps Screen Added
 Following these lessons to integrate firebase and google maps
 (https://fireship.io/lessons/flutter-realtime-geolocation-firebase/)
-![MapScreen](https://github.com/kalvish/flash-chat-flutter/blob/map_screen/map_screen_screenshot.jpg =250x)
+![MapScreen](https://github.com/kalvish/flash-chat-flutter/blob/map_screen/map_screen_screenshot.jpg){ width=50% }
 
 
