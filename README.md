@@ -1,4 +1,4 @@
-![App Brewery Banner](https://github.com/londonappbrewery/Images/blob/master/AppBreweryBanner.png)
+﻿![App Brewery Banner](https://github.com/londonappbrewery/Images/blob/master/AppBreweryBanner.png)
 
 
 # Flash Chat ⚡️
@@ -30,3 +30,9 @@ We’re going to build a modern messaging app where users can sign up and log in
 >This is a companion project to The App Brewery's Complete Flutter Development Bootcamp, check out the full course at [www.appbrewery.co](https://www.appbrewery.co/)
 
 ![End Banner](https://github.com/londonappbrewery/Images/blob/master/readme-end-banner.png)
+
+## Google Maps Screen Added
+Following these lessons to integrate firebase and google maps
+(https://fireship.io/lessons/flutter-realtime-geolocation-firebase/)
+
+
