@@ -10,7 +10,7 @@ class Location {
     Location locationToSend = new Location();
     try {
       Position position = await Geolocator()
-          .getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+          .getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation);
 //      print(position);
       locationToSend.latitude = position.latitude;
       locationToSend.longitude = position.longitude;
