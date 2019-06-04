@@ -4,6 +4,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'package:flash_chat/services/location.dart';
 
@@ -24,6 +27,16 @@ class _MapScreenState extends State<MapScreen> {
   MarkerId selectedMarker;
   int _markerIdCounter = 1;
 
+  Firestore firestore = Firestore.instance;
+  Geoflutterfire geoflutterfire = Geoflutterfire();
+
+  // Stateful Data
+  BehaviorSubject<double> radius = BehaviorSubject(/*seedValue: 100.0*/);
+  Stream<dynamic> query;
+
+  // Subscription
+  StreamSubscription subscription;
+
   static LatLng center = const LatLng(6.8874854, 79.91237009999998);
 
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -41,6 +54,8 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    radius.add(100.0);
   }
 
   @override
@@ -325,14 +340,15 @@ class _MapScreenState extends State<MapScreen> {
 
     final String markerIdVal = 'marker_id_$_markerIdCounter';
     _markerIdCounter++;
+    LatLng markerPosition = LatLng(
+      center.latitude + sin(_markerIdCounter * pi / 6.0) / 20.0,
+      center.longitude + cos(_markerIdCounter * pi / 6.0) / 20.0,
+    );
     final MarkerId markerId = MarkerId(markerIdVal);
 
     final Marker marker = Marker(
       markerId: markerId,
-      position: LatLng(
-        center.latitude + sin(_markerIdCounter * pi / 6.0) / 20.0,
-        center.longitude + cos(_markerIdCounter * pi / 6.0) / 20.0,
-      ),
+      position: markerPosition,
       infoWindow: InfoWindow(title: markerIdVal, snippet: '*'),
       onTap: () {
         _onMarkerTapped(markerId);
@@ -342,6 +358,8 @@ class _MapScreenState extends State<MapScreen> {
     setState(() {
       markers[markerId] = marker;
     });
+
+    _addGeoPoint(markerPosition);
   }
 
   void _remove() {
@@ -460,5 +478,15 @@ class _MapScreenState extends State<MapScreen> {
         zIndexParam: current == 12.0 ? 0.0 : current + 1.0,
       );
     });
+  }
+
+  Future<DocumentReference> _addGeoPoint(LatLng latLng) async {
+//    var pos = await location.getLocation();
+//    GeoFirePoint point = geoflutterfire.point(latitude: pos['latitude'], longitude: pos['longitude']);
+    GeoFirePoint point = geoflutterfire.point(
+        latitude: latLng.latitude, longitude: latLng.longitude);
+    return firestore
+        .collection('locations')
+        .add({'position': point.data, 'name': 'Yay I can be queried!'});
   }
 }

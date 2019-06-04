@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:flash_chat/screens/map_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login_screen';
@@ -79,7 +80,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     final user = await _auth.signInWithEmailAndPassword(
                         email: userEmail, password: userPassword);
                     if (user != null) {
-                      Navigator.pushNamed(context, ChatScreen.id);
+//                      Navigator.pushNamed(context, ChatScreen.id);
+                      Navigator.pushNamed(context, MapScreen.id);
                     }
                   } on Exception catch (e) {
                     // TODO
