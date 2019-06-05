@@ -55,7 +55,8 @@ class _MapScreenState extends State<MapScreen> {
     // TODO: implement initState
     super.initState();
 
-    radius.add(100.0);
+//    radius.add(100.0);
+    radius.add(10.0);
   }
 
   @override
@@ -144,8 +145,38 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ],
               ),
+              Row(
+                children: <Widget>[
+                  Card(
+                    child: Slider(
+                      min: 10.0 /*100.0*/,
+                      max: 50.0 /*500.0*/,
+                      divisions: 4,
+                      value: radius.value,
+                      label: 'Radius ${radius.value}km',
+                      activeColor: Colors.green,
+                      inactiveColor: Colors.green.withOpacity(0.2),
+                      onChanged: _updateQuery,
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
+//          Positioned(
+//            bottom: 50,
+//            left: 10,
+//            child: Slider(
+//              min: 100.0,
+//              max: 500.0,
+//              divisions: 4,
+//              value: radius.value,
+//              label: 'Radius ${radius.value}km',
+//              activeColor: Colors.green,
+//              inactiveColor: Colors.green.withOpacity(0.2),
+//              onChanged: _updateQuery,
+//            ),
+//          ),
 //          Positioned(child: FlatButton(onPressed: _add
 //          , child: Icon(Icons.pin_drop),
 //          color: Colors.green,)),
@@ -275,6 +306,7 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void dispose() {
+    subscription.cancel();
     super.dispose();
   }
 
@@ -294,6 +326,8 @@ class _MapScreenState extends State<MapScreen> {
       controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
           target: LatLng(location.latitude, location.longitude),
           zoom: 19.151926040649414)));
+
+      _startQuery();
     }
   }
 
@@ -341,7 +375,9 @@ class _MapScreenState extends State<MapScreen> {
     final String markerIdVal = 'marker_id_$_markerIdCounter';
     _markerIdCounter++;
     LatLng markerPosition = LatLng(
-      center.latitude + sin(_markerIdCounter * pi / 6.0) / 20.0,
+      center.latitude +
+          sin(_markerIdCounter * pi / 6.0) / 20.0 +
+          (_markerIdCounter / 120),
       center.longitude + cos(_markerIdCounter * pi / 6.0) / 20.0,
     );
     final MarkerId markerId = MarkerId(markerIdVal);
@@ -360,6 +396,31 @@ class _MapScreenState extends State<MapScreen> {
     });
 
     _addGeoPoint(markerPosition);
+  }
+
+  void _addMarkerToMap({LatLng latLng, double distance}) {
+    double distanceToDisplay = -1;
+    final String markerIdVal = 'marker_id_$_markerIdCounter';
+    _markerIdCounter++;
+    LatLng markerPosition = latLng;
+    final MarkerId markerId = MarkerId(markerIdVal);
+
+    final Marker marker = Marker(
+      markerId: markerId,
+      position: markerPosition,
+      infoWindow: InfoWindow(
+          title:
+              markerIdVal + '$distanceToDisplay kilometers from query center',
+          snippet: '*'),
+      icon: BitmapDescriptor.defaultMarker,
+      onTap: () {
+        _onMarkerTapped(markerId);
+      },
+    );
+
+    setState(() {
+      markers[markerId] = marker;
+    });
   }
 
   void _remove() {
@@ -488,5 +549,64 @@ class _MapScreenState extends State<MapScreen> {
     return firestore
         .collection('locations')
         .add({'position': point.data, 'name': 'Yay I can be queried!'});
+  }
+
+  _updateQuery(value) {
+//    final zoomMap = {
+//      100.0: 12.0,
+//      200.0: 10.0,
+//      300.0: 7.0,
+//      400.0: 6.0,
+//      500.0: 5.0
+//    };
+    final zoomMap = {
+      10.0: 14.0,
+      20.0: 13.0,
+      30.0: 12.0,
+      40.0: 11.0,
+      50.0: 10.0
+    };
+    final zoom = zoomMap[value];
+    googleMapController.moveCamera(CameraUpdate.zoomTo(zoom));
+
+    setState(() {
+      radius.add(value);
+    });
+  }
+
+  void _updateMarkers(List<DocumentSnapshot> documentList) {
+    print(documentList);
+//    googleMapController.clearMarkers();
+    markers.clear();
+    documentList.forEach((DocumentSnapshot document) {
+      GeoPoint pos = document.data['position']['geopoint'];
+      double distance = document.data['distance'];
+      LatLng latLng = LatLng(pos.latitude, pos.longitude);
+      _addMarkerToMap(latLng: latLng, distance: distance);
+    });
+  }
+
+  _startQuery() async {
+    // Get users location
+//    var pos = await location.getLocation();
+//    double lat = pos['latitude'];
+//    double lng = pos['longitude'];
+
+    double lat = center.latitude;
+    double lng = center.longitude;
+
+    // Make a referece to firestore
+    var ref = firestore.collection('locations');
+    GeoFirePoint centerLocal =
+        geoflutterfire.point(latitude: lat, longitude: lng);
+
+    // subscribe to query
+    subscription = radius.switchMap((rad) {
+      return geoflutterfire.collection(collectionRef: ref).within(
+          center: centerLocal,
+          radius: rad,
+          field: 'position',
+          strictMode: true);
+    }).listen(_updateMarkers);
   }
 }
